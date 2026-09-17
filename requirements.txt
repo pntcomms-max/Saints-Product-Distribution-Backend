@@ -1,0 +1,8 @@
+Django>=5.2,<6.0
+djangorestframework==3.15.1
+djangorestframework-simplejwt==5.3.1
+django-cors-headers==4.3.1
+django-filter==24.2
+python-decouple==3.8
+gunicorn==22.0.0
+firebase-admin==6.5.0  # optional — only needed for push notifications, see apps/alerts/push.py
