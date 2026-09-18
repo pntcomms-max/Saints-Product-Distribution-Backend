@@ -7,3 +7,4 @@ python-decouple==3.8
 gunicorn==22.0.0
 firebase-admin==6.5.0  # optional — only needed for push notifications, see apps/alerts/push.py
 psycopg2-binary
+whitenoise==6.7.0
