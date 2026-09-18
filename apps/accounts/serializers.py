@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class SetPasswordSerializer(serializers.Serializer):
-    new_password = serializers.CharField(min_length=8, write_only=True)
+    new_password = serializers.CharField(min_length=1, write_only=True)
 
 
 class DeviceTokenSerializer(serializers.ModelSerializer):
