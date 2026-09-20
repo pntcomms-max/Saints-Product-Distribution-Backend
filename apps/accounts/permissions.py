@@ -1,32 +1,53 @@
 from rest_framework.permissions import BasePermission
 
+class RoleScopedQuerysetMixin:
+    """
+    Mixin to filter querysets based on user roles:
+    - Field Reps/Sales Reps see only their assigned records.
+    - Supervisors see records within their assigned region/territory.
+    - Managers/Admins see all records nationwide.
+    """
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        user = self.request.user
+
+        if not user or not user.is_authenticated:
+            return queryset.none()
+
+        # Admins and Managers see everything
+        if user.role in ["ADMIN", "SUPERADMIN", "MANAGER"]:
+            return queryset
+
+        # Supervisors see everything in their region
+        if user.role == "SUPERVISOR":
+            if hasattr(queryset.model, "region"):
+                return queryset.filter(region=user.region)
+            return queryset
+
+        # Field/Sales Reps see only their assigned items/sales
+        if hasattr(queryset.model, "sales_rep"):
+            return queryset.filter(sales_rep=user)
+        if hasattr(queryset.model, "assigned_to"):
+            return queryset.filter(assigned_to=user)
+        if hasattr(queryset.model, "user"):
+            return queryset.filter(user=user)
+
+        return queryset
+
 
 class IsManager(BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and request.user.role in ("MANAGER", "ADMIN"))
+        return (
+            request.user 
+            and request.user.is_authenticated 
+            and getattr(request.user, "role", None) in ["MANAGER", "ADMIN", "SUPERADMIN"]
+        )
 
 
 class IsSupervisorOrAbove(BasePermission):
     def has_permission(self, request, view):
-        return bool(request.user and request.user.role in ("SUPERVISOR", "MANAGER", "ADMIN"))
-
-
-class RoleScopedQuerysetMixin:
-    """
-    Mixin for ViewSets whose queryset has a `.ba` (or direct owner) field
-    that should be scoped by who's asking:
-      - BA: only their own rows
-      - Supervisor: rows for BAs on their team
-      - Manager/Admin: everything
-    Set `ba_field` on the view if the FK isn't literally called `ba`.
-    """
-    ba_field = "ba"
-
-    def get_queryset(self):
-        qs = super().get_queryset()
-        user = self.request.user
-        if user.role == "BA":
-            return qs.filter(**{self.ba_field: user})
-        if user.role == "SUPERVISOR":
-            return qs.filter(**{f"{self.ba_field}__supervisor": user})
-        return qs  # MANAGER / ADMIN see everything
+        return (
+            request.user 
+            and request.user.is_authenticated 
+            and getattr(request.user, "role", None) in ["SUPERVISOR", "MANAGER", "ADMIN", "SUPERADMIN"]
+        )

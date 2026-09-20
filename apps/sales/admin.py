@@ -4,6 +4,6 @@ from .models import Sale
 
 @admin.register(Sale)
 class SaleAdmin(admin.ModelAdmin):
-    list_display = ["ba", "product", "quantity", "amount", "region", "created_at"]
-    list_filter = ["region", "product__brand"]
-    readonly_fields = ["amount"]
+    list_display = ("sales_rep", "product", "quantity", "amount", "created_at")
+    list_filter = ("created_at", "product")
+    search_fields = ("sales_rep__username", "sales_rep__first_name", "sales_rep__last_name", "product__name")

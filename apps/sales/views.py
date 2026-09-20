@@ -28,3 +28,28 @@ class SaleViewSet(RoleScopedQuerysetMixin, mixins.ListModelMixin, mixins.Retriev
             # letting it fall through as an unhandled 500.
             raise ValidationError({"quantity": str(e)})
         return Response(SaleSerializer(sale).data, status=201)
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.db.models import Sum
+from .models import SalesOrder
+
+class EndOfDayReconciliationView(APIView):
+    """
+    Submits and calculates daily sales totals vs physical handover totals
+    """
+    def get(self, request, rep_id):
+        orders = SalesOrder.objects.filter(rep_id=rep_id, created_at__date=request.GET.get('date'))
+        
+        cash_total = orders.filter(payment_method='CASH').aggregate(Sum('total_amount'))['total_amount__sum'] or 0.00
+        ecocash_total = orders.filter(payment_method='ECOCASH').aggregate(Sum('total_amount'))['total_amount__sum'] or 0.00
+        credit_total = orders.filter(payment_method='CREDIT').aggregate(Sum('total_amount'))['total_amount__sum'] or 0.00
+        
+        return Response({
+            "rep_id": rep_id,
+            "cash_collected": cash_total,
+            "ecocash_received": ecocash_total,
+            "credit_issued": credit_total,
+            "grand_total": cash_total + ecocash_total + credit_total
+        },   status=status.HTTP_200_OK)

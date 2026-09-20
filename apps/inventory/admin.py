@@ -4,5 +4,6 @@ from .models import InventoryItem
 
 @admin.register(InventoryItem)
 class InventoryItemAdmin(admin.ModelAdmin):
-    list_display = ["ba", "product", "quantity", "status", "updated_at"]
-    list_filter = ["ba__region", "product__brand"]
+    list_display = ["sales_rep", "product", "quantity", "updated_at"]
+    list_filter = ["product"]
+    search_fields = ["sales_rep__first_name", "sales_rep__last_name", "product__name"]

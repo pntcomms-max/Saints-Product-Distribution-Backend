@@ -11,7 +11,7 @@ class RegionSerializer(serializers.ModelSerializer):
 class ManufacturerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Manufacturer
-        fields = ["id", "name"]
+        fields = ['id', 'name', 'contact_person', 'email', 'phone', 'is_active', 'created_at']
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -28,7 +28,6 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = [
-            "id", "name", "sku", "unit", "price", "is_active",
-            "brand", "brand_name", "manufacturer_name",
-        ]
+        fields = ('id', 'manufacturer', 'manufacturer_name', 'name', 'sku', 
+            'unit_type', 'units_per_carton', 'cartons_per_case', 
+            'wholesale_price', 'retail_price', 'is_active')

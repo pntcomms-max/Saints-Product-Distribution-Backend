@@ -1,4 +1,4 @@
-# Route & Stock — Backend (Django + DRF)
+# Saints Distribution — Backend (Django + DRF)
 
 Distribution-network API: brand ambassadors, inventory, cash-basis sales,
 location check-ins, and demand forecasting. Product lines (manufacturer →

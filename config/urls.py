@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
+admin.site.site_header = "Saints Distribution Admin"
+admin.site.site_title = "Saints Distribution Portal"
+admin.site.index_title = "Welcome to Saints Distribution Management System"
+
 urlpatterns = [
     path("admin/", admin.site.urls),
 
