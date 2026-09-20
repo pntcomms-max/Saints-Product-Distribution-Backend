@@ -31,7 +31,7 @@ class Command(BaseCommand):
         created_count = 0
         resolved_count = 0
 
-        bas = User.objects.filter(role=User.Role.BA).select_related("supervisor", "region")
+        bas = User.objects.filter(role=Role.SALES_REP).select_related("supervisor", "region")
         managers = list(User.objects.filter(role=User.Role.MANAGER))
 
         for ba in bas:

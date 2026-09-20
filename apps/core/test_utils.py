@@ -19,17 +19,17 @@ def make_org():
 
     manager = User.objects.create_user(username="manager", password="pw12345!", role=User.Role.MANAGER)
     supervisor = User.objects.create_user(
-        username="supervisor", password="pw12345!", role=User.Role.SUPERVISOR, region=region,
+        username="supervisor", password="pw12345!", role=Role.Supervisor, region=region,
     )
     ba = User.objects.create_user(
-        username="ba1", password="pw12345!", role=User.Role.BA,
+        username="ba1", password="pw12345!", role=Role.SALES_REP,
         region=region, supervisor=supervisor,
     )
     other_supervisor = User.objects.create_user(
-        username="supervisor2", password="pw12345!", role=User.Role.SUPERVISOR, region=region,
+        username="supervisor2", password="pw12345!", role=Role.Supervisor, region=region,
     )
     other_ba = User.objects.create_user(
-        username="ba2", password="pw12345!", role=User.Role.BA,
+        username="ba2", password="pw12345!", role=Role.SALES_REP,
         region=region, supervisor=other_supervisor,
     )
 

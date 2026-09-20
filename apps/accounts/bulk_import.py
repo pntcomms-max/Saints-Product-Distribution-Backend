@@ -92,7 +92,7 @@ def import_users_from_csv(file_like) -> ImportResult:
                 sup_username = (row.get("supervisor_username") or "").strip()
                 if sup_username:
                     try:
-                        supervisor = User.objects.get(username=sup_username, role=User.Role.SUPERVISOR)
+                        supervisor = User.objects.get(username=sup_username, role=Role.Supervisor)
                     except User.DoesNotExist:
                         raise ValueError(f"supervisor_username '{sup_username}' not found (or not a supervisor)")
 

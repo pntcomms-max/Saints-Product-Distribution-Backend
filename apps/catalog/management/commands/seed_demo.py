@@ -79,7 +79,7 @@ class Command(BaseCommand):
             username = f"sup_{first.lower()}"
             sup, _ = User.objects.get_or_create(
                 username=username, defaults={
-                    "first_name": first, "last_name": last, "role": User.Role.SUPERVISOR,
+                    "first_name": first, "last_name": last, "role": Role.Supervisor,
                     "region": regions[REGIONS[i * 2 % len(REGIONS)]],
                 },
             )
@@ -94,7 +94,7 @@ class Command(BaseCommand):
             supervisor = supervisors[i % len(supervisors)]
             ba, _ = User.objects.get_or_create(
                 username=username, defaults={
-                    "first_name": first, "last_name": last, "role": User.Role.BA,
+                    "first_name": first, "last_name": last, "role": Role.SALES_REP,
                     "region": region, "supervisor": supervisor,
                 },
             )
