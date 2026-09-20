@@ -99,14 +99,14 @@ class Command(BaseCommand):
                 sales_rep.save()
             sales_reps.append(sales_rep)
 
-        # 5. Seed Inventory using sales_rep field
+        # 5. Seed Inventory
         for rep in sales_reps:
             for product in products:
                 InventoryItem.objects.get_or_create(
                     sales_rep=rep, product=product, defaults={"quantity": random.randint(2, 27)},
                 )
 
-        # 6. Seed 21 Days of GPS-Tracked Sales & Check-Ins using sales_rep field
+        # 6. Seed 21 Days of GPS Sales & Check-Ins
         if not Sale.objects.exists():
             now = timezone.now()
             for d in range(20, -1, -1):
