@@ -35,7 +35,7 @@ CATALOG = {
 }
 
 SUPERVISOR_NAMES = [("Tendai", "Moyo"), ("Rutendo", "Chikwava"), ("Farai", "Ndlovu")]
-BA_NAMES = [
+SALES_REP_NAMES = [
     ("Tapiwa", "Muza"), ("Chiedza", "Dube"), ("Blessing", "Sibanda"), ("Rumbidzai", "Gwara"),
     ("Kudakwashe", "Banda"), ("Nyasha", "Chirwa"), ("Tafadzwa", "Zulu"), ("Anesu", "Marufu"),
     ("Panashe", "Moyo"), ("Vimbai", "Ncube"), ("Tinashe", "Gore"), ("Shamiso", "Mabika"),
@@ -64,7 +64,7 @@ class Command(BaseCommand):
         if not User.objects.filter(username="manager").exists():
             manager = User.objects.create_user(
                 username="manager", password="changeme123", first_name="Blessing", last_name="Chatora",
-                role=User.Role.MANAGER,
+                role="MANAGER",
             )
         else:
             manager = User.objects.get(username="manager")
@@ -75,7 +75,7 @@ class Command(BaseCommand):
             username = f"sup_{first.lower()}"
             sup, created = User.objects.get_or_create(
                 username=username, defaults={
-                    "first_name": first, "last_name": last, "role": User.Role.SUPERVISOR,
+                    "first_name": first, "last_name": last, "role": "SUPERVISOR",
                 },
             )
             if created:
@@ -83,36 +83,35 @@ class Command(BaseCommand):
                 sup.save()
             supervisors.append(sup)
 
-        # 4. Seed Sales Reps (BAs)
-        bas = []
-        for i, (first, last) in enumerate(BA_NAMES):
-            username = f"ba_{first.lower()}"
+        # 4. Seed Sales Reps
+        sales_reps = []
+        for i, (first, last) in enumerate(SALES_REP_NAMES):
+            username = f"rep_{first.lower()}"
             supervisor = supervisors[i % len(supervisors)]
-            ba, created = User.objects.get_or_create(
+            sales_rep, created = User.objects.get_or_create(
                 username=username, defaults={
-                    "first_name": first, "last_name": last, "role": User.Role.SALES_REP,
+                    "first_name": first, "last_name": last, "role": "SALES_REP",
                     "supervisor": supervisor,
                 },
             )
             if created:
-                ba.set_password("changeme123")
-                ba.save()
-            bas.append(ba)
+                sales_rep.set_password("changeme123")
+                sales_rep.save()
+            sales_reps.append(sales_rep)
 
-        # 5. Seed Inventory
-        for ba in bas:
+        # 5. Seed Inventory using sales_rep field
+        for rep in sales_reps:
             for product in products:
                 InventoryItem.objects.get_or_create(
-                    sales_rep=ba, product=product, defaults={"quantity": random.randint(2, 27)},
+                    sales_rep=rep, product=product, defaults={"quantity": random.randint(2, 27)},
                 )
 
-        # 6. Seed 21 Days of GPS-Tracked Sales & Check-Ins
+        # 6. Seed 21 Days of GPS-Tracked Sales & Check-Ins using sales_rep field
         if not Sale.objects.exists():
             now = timezone.now()
             for d in range(20, -1, -1):
                 day = now - timedelta(days=d)
-                for i, ba in enumerate(bas):
-                    # Fetch base coordinates for jittering
+                for i, rep in enumerate(sales_reps):
                     base_lat, base_lng = LOCATION_COORDS[i % len(LOCATION_COORDS)]
 
                     for _ in range(random.randint(0, 3)):
@@ -122,7 +121,7 @@ class Command(BaseCommand):
                         jitter_lng = base_lng + random.uniform(-0.02, 0.02)
 
                         Sale.objects.create(
-                            sales_rep=ba,
+                            sales_rep=rep,
                             product=product,
                             quantity=qty,
                             unit_price=product.price,
@@ -135,7 +134,7 @@ class Command(BaseCommand):
                         jitter_lat = base_lat + random.uniform(-0.03, 0.03)
                         jitter_lng = base_lng + random.uniform(-0.03, 0.03)
                         CheckIn.objects.create(
-                            sales_rep=ba,
+                            sales_rep=rep,
                             latitude=jitter_lat,
                             longitude=jitter_lng,
                             created_at=day - timedelta(hours=random.randint(0, 8)),
@@ -144,6 +143,6 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(
             f"Successfully seeded GPS-centric demo data! "
             f"Created {len(products)} products (CRP/Boss/RG), "
-            f"1 manager, {len(supervisors)} supervisors, {len(bas)} sales reps. "
-            f"Login test credentials: manager/changeme123, sup_tendai/changeme123, ba_tapiwa/changeme123"
+            f"1 manager, {len(supervisors)} supervisors, {len(sales_reps)} sales reps. "
+            f"Login test credentials: manager/changeme123, sup_tendai/changeme123, rep_tapiwa/changeme123"
         ))
