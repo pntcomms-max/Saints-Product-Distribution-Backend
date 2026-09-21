@@ -6,24 +6,35 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('sales', '0002_alter_sale_product_alter_sale_region_salesorder'),
+        ('accounts', '0001_initial'),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
-        migrations.RenameField(
-            model_name='sale',
-            old_name='ba',
-            new_name='sales_rep',
+        migrations.RemoveField(
+            model_name='user',
+            name='phone',
+        ),
+        migrations.RemoveField(
+            model_name='user',
+            name='assigned_territory',
+        ),
+        migrations.AddField(
+            model_name='user',
+            name='phone_number',
+            field=models.CharField(blank=True, max_length=20, null=True),
         ),
         migrations.AlterField(
-            model_name='sale',
-            name='sales_rep',
-            field=models.ForeignKey(
-                limit_choices_to={'role': 'SALES_REP'},
-                on_delete=django.db.models.deletion.CASCADE,
-                related_name='sales',
-                to=settings.AUTH_USER_MODEL,
+            model_name='user',
+            name='role',
+            field=models.CharField(
+                choices=[
+                    ('ADMIN', 'Admin'),
+                    ('MANAGER', 'Manager'),
+                    ('SALES_REP', 'Sales Rep'),
+                ],
+                default='SALES_REP',
+                max_length=20,
             ),
         ),
     ]
