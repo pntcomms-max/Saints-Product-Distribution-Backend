@@ -7,9 +7,9 @@ class CheckIn(models.Model):
         MANUAL = "MANUAL", "Manual check-in"
         PASSIVE = "PASSIVE", "Passive background ping"
 
-    ba = models.ForeignKey(
+    sales_rep = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE,
-        related_name="checkins", limit_choices_to={"role": "BA"},
+        related_name="checkins", limit_choices_to={"role": "SALES_REP"},
     )
     region = models.ForeignKey("catalog.Region", on_delete=models.SET_NULL, null=True, related_name="checkins")
     latitude = models.FloatField(null=True, blank=True)
@@ -22,4 +22,4 @@ class CheckIn(models.Model):
         ordering = ["-created_at"]
 
     def __str__(self):
-        return f"{self.ba} @ {self.created_at:%Y-%m-%d %H:%M}"
+        return f"{self.sales_rep} @ {self.created_at:%Y-%m-%d %H:%M}"
