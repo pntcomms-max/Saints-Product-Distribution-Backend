@@ -8,5 +8,5 @@ class CustomUserAdmin(UserAdmin):
     list_display = ["username", "get_full_name", "role", "region", "supervisor", "is_active"]
     list_filter = ["role", "region"]
     fieldsets = UserAdmin.fieldsets + (
-        ("Network role", {"fields": ("role", "phone", "region", "supervisor", "is_active_field_agent", "must_change_password")}),
+        ("Network role", {"fields": ("role", "phone_number", "region", "supervisor", "is_active_field_agent", "must_change_password")}),
     )

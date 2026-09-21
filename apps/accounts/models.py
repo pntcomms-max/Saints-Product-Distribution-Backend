@@ -7,6 +7,7 @@ class UserRole(models.TextChoices):
     MANAGER = 'MANAGER', 'Manager'
     SUPERVISOR = 'SUPERVISOR', 'Supervisor'
     SALES_REP = 'SALES_REP', 'Sales Representative'
+    DRIVER = 'DRIVER', 'Delivery Driver'
 
 class User(AbstractUser):
     role = models.CharField(max_length=20, choices=UserRole.choices, default=UserRole.SALES_REP)
