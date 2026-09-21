@@ -14,14 +14,19 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='sale',
-            name='ba',
+    migrations.RenameField(
+        model_name='sale',
+        old_name='ba',
+        new_name='sales_rep',
+    ),
+    migrations.AlterField(
+        model_name='sale',
+        name='sales_rep',
+        field=models.ForeignKey(
+            limit_choices_to={'role': 'SALES_REP'},
+            on_delete=django.db.models.deletion.CASCADE,
+            related_name='sales',
+            to=settings.AUTH_USER_MODEL,
         ),
-        migrations.AddField(
-            model_name='sale',
-            name='sales_rep',
-            field=models.ForeignKey(default=django.utils.timezone.now, limit_choices_to={'role': 'SALES_REP'}, on_delete=django.db.models.deletion.CASCADE, related_name='sales', to=settings.AUTH_USER_MODEL),
-            preserve_default=False,
-        ),
-    ]
+    ),
+]
