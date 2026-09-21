@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from apps.catalog.models import Product
 
 
 class UserRole(models.TextChoices):
@@ -15,7 +16,7 @@ class User(AbstractUser):
     assigned_territory = models.CharField(max_length=255, blank=True)
     daily_sales_target = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     region = models.ForeignKey(
-            "catalog.Region", null=True, blank=True,
+            "apps_catalog.Region", null=True, blank=True,
             on_delete=models.SET_NULL, related_name="users",
         )
     # Only meaningful when role == SALES_REP: which supervisor manages them.

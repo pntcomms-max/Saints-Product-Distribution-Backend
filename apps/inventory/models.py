@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from apps.catalog.models import Product
 
 class InventoryItem(models.Model):
     sales_rep = models.ForeignKey(
