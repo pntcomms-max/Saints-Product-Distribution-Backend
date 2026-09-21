@@ -15,10 +15,6 @@ class Migration(migrations.Migration):
             model_name='user',
             name='phone',
         ),
-        migrations.RemoveField(
-            model_name='user',
-            name='assigned_territory',
-        ),
         migrations.AddField(
             model_name='user',
             name='phone_number',
